@@ -3,7 +3,14 @@ const router = new Router();
 
 
 router.post("/",(ctx,next)=>{
-    console.log("post参数",ctx.request.body)
+    // console.log("post参数",ctx.request.body)
+    // ctx.cookies.set("token",'this is a token')
+    // console.log("ctx.cookies",ctx.cookies.get("token"))
+
+    ctx.session.user = {
+      username:"dong"
+    }
+
     ctx.body={
       ok:1,
       info:'add success',

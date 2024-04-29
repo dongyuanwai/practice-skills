@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
     <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
     <script>
         // 拦截器
         axios.interceptors.request.use(function (config) {
             // 请求发出前 执行的方法
             const token = localStorage.getItem('token');
+            console.log("🚀 ~ token:", token)
             config.headers.Authorization = `Bearer ${token}`
             return config;
         }, function (error) {
@@ -21,26 +26,43 @@
             // 请求成功后 第一个调用的方法
             // 在此处 获取token
             const {authorization} = response.headers;
+            console.log("🚀 ~ authorization:", authorization)
             if(authorization){
                 localStorage.setItem('token', authorization)
             }
             return response;
         }, function (error) {
-            console.log("error",error)
-            if(error.response.status === 401){
-                localStorage.removeItem("token")
-                location.href='/login'
-            }
+            // Any status codes that falls outside the range of 2xx cause this function to trigger
+            // Do something with response error
             return Promise.reject(error);
         });
-
-        axios.get('/home/list').then(res=>{
-            console.log("🚀 ~ res:", res)
-        })
     </script>
+
 </head>
+
 <body>
-    <h1>home模版页面</h1>
-    <div></div>
+    <h1>login登录页</h1>
+    <h2>username:dongyuanwai</h2>
+    <h2>password:123456</h2>
+    <button id="rightLogin">点击登录</button>
+    <div style="width: 100%; border: 2px solid red;margin: 20px 0;"></div>
+    <button id="errorLogin"> 输入用户名密码错误——点击登录</button>
+
+    <script>
+        document.getElementById('rightLogin').onclick = function () {
+            const data = {
+                username: 'dongyuanwai',
+                password: '123456'
+            }
+            axios.post("/login", data).then(res => {
+                console.log("成功", res)
+                if (res.data.ok === 1) {
+                    location.href = '/home'
+                    // alert("跳转-=-=")
+                }
+            })
+        }
+    </script>
 </body>
+
 </html>
